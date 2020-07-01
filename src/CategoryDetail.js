@@ -1,15 +1,35 @@
 import React from 'react';
-import {View, StyleSheet, Text} from 'react-native';
+import {View, StyleSheet, Text, useWindowDimensions} from 'react-native';
 
 import Edit from './assets/edit.svg';
 import EditLight from './assets/edit_light.svg';
 import CateogryListItem from './CurrentListItem';
+import {mix} from 'react-native-redash';
+import Animated, {interpolate, Extrapolate} from 'react-native-reanimated';
 
 const TOP_MARGIN = 60;
 
-export default ({item: {color: backgroundColor, theme, title, items}}) => {
+export default ({
+  item: {color: backgroundColor, theme, title, items},
+  progress,
+  startPosition: {x, y, width: elementWidth, height: elementHeight} = {},
+}) => {
+  const opacity = interpolate(progress, {
+    inputRange: [0, 0.2],
+    outputRange: [0, 1],
+    extrapolate: Extrapolate.CLAMP,
+  });
+  const {width: appWidth, height: appHeight} = useWindowDimensions();
+  const width = mix(progress, elementWidth, appWidth);
+  const height = mix(progress, elementHeight, appHeight - TOP_MARGIN);
+  const left = mix(progress, x, 0);
+  const top = mix(progress, y, TOP_MARGIN);
   return (
-    <View style={[styles.container, {backgroundColor}]}>
+    <Animated.View
+      style={[
+        styles.container,
+        {backgroundColor, opacity, width, height, left, top},
+      ]}>
       <View style={styles.indicator} />
       <View>
         <Header {...{theme, items, title}} />
@@ -17,7 +37,7 @@ export default ({item: {color: backgroundColor, theme, title, items}}) => {
           <CateogryListItem key={`${index}`} {...item} {...{theme}} />
         ))}
       </View>
-    </View>
+    </Animated.View>
   );
 };
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {StyleSheet, Text, TouchableOpacity} from 'react-native';
 
 export default ({
@@ -7,13 +7,22 @@ export default ({
   title,
   items: {length: itemCount} = {length: 0},
   onPress,
+  onGetPosition,
 }) => {
   const isDark = theme === 'DARK';
   const color = isDark ? 'rgba(0,0,0,.9)' : '#FFFFFF';
 
+  const element = useRef(null);
+  const onLayout = () => {
+    element.current.measure((fx, fy, width, height, px, py) => {
+      onGetPosition?.({x: px, y: py, width, height});
+    });
+  };
+
   return (
     <TouchableOpacity
-      {...{onPress}}
+      ref={element}
+      {...{onPress, onLayout}}
       activeOpacity={0.7}
       style={[styles.categoryContainer, {backgroundColor}]}>
       <Text style={[styles.categoryTitleText, {color}]}>{title}</Text>
