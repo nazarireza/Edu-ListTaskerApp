@@ -46,13 +46,12 @@ const App = () => {
             />
           </ScrollView>
         </Animated.View>
-        {isOpen && (
-          <CategoryDetail
-            {...{progress}}
-            item={categories[selectedIndex]}
-            startPosition={categoriesLayout.current[selectedIndex]}
-          />
-        )}
+        <CategoryDetail
+          {...{progress}}
+          item={categories[selectedIndex]}
+          startPosition={categoriesLayout.current[selectedIndex]}
+          onDismiss={() => setIsOpen(false)}
+        />
       </View>
     </>
   );
